@@ -1,7 +1,10 @@
 package bank.api.services;
 
-import bank.api.dao.BankAccountsDao;
 import bank.api.entities.BankAccounts;
+import bank.api.entities.Clients;
+import bank.api.exceptions.NotFoundException;
+import bank.api.repository.BankAccountsRepo;
+import bank.api.repository.ClientsRepo;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,20 +15,24 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BankAccountsServiceImpl implements BankAccountsService {
 
-    private final        BankAccountsDao bankAccountsDao;
-    private static final Logger          LOGGER = LoggerFactory.getLogger(CardsServiceImpl.class);
+    private final        BankAccountsRepo bankAccountsRepo;
+    private final        ClientsRepo      clientsRepo;
+    private static final Logger           LOGGER = LoggerFactory.getLogger(CardsServiceImpl.class);
 
     @Override
     @Transactional
-    public void addBankAccounts(int idClients, BankAccounts bankAccounts) {
+    public void addBankAccounts(long idClients, BankAccounts bankAccounts) {
         LOGGER.debug("Start addBankAccounts method in BankAccountsServiceImpl...");
-        bankAccountsDao.addBankAccounts(idClients, bankAccounts);
+        bankAccountsRepo.save(bankAccounts);
+        Clients clients = clientsRepo.findById(idClients).orElseThrow(() -> new NotFoundException("Clients with id: " + idClients + " not found"));
+        clients.addBankAccounts(bankAccounts);
     }
 
     @Override
     @Transactional
     public void removeBankAccounts(BankAccounts bankAccounts) {
         LOGGER.debug("Start removeBankAccounts method in BankAccountsServiceImpl...");
-        bankAccountsDao.removeBankAccounts(bankAccounts);
+        bankAccountsRepo.delete(bankAccounts);
+        bankAccounts.getClients().removeBankAccount(bankAccounts);
     }
 }

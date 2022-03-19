@@ -10,34 +10,44 @@ import java.util.List;
 public interface CardsService {
 
     /**
-     * @param bankAccountNumber
-     * @return
-     * @throws Exception
+     * Данный метод позволяет добавить новую карту к определенному счету
+     *
+     * @param bankAccountNumber Счет к которому добавляется карта
+     * @return метод возвращает созданную карту при успешном добавлении
      */
     Cards addCards(String bankAccountNumber);
 
     /**
-     * @param card
+     * Данный метод позволяет удалить существующую карту из базы данных
+     *
+     * @param card карта, которую нужно удалить
      */
     void removeCards(Cards card);
 
     /**
-     * @param clientsName
-     * @return
+     * Данный метод позволяет получить список карт, которые принадлежат
+     * определенному клиенту
+     *
+     * @param clientsName имя клиента, чьи карты нужно получить
+     * @return возвращает лист карт указанного клиента
      */
     List<Cards> getCardsByClient(String clientsName);
 
     /**
-     * @param cardNumber
-     * @param value
-     * @throws Exception
+     * Данный метод пополняет баланс счета к которому привязана карта
+     * на указанную сумму
+     *
+     * @param cardNumber карта через которую происходит пополение
+     * @param value      сумма на которую необходимо пополнить
      */
     void addFundsByCard(long cardNumber, int value);
 
     /**
-     * @param cardNumber
-     * @return
-     * @throws Exception
+     * Данный метод позволяет проверить баланс средств на счете к которому привязана
+     * указанная карта
+     *
+     * @param cardNumber карта с помощью котороый необходимо узнать баланс
+     * @return возвращается сумма которая находится на счете в данный момент
      */
     int checkBalance(long cardNumber);
 }

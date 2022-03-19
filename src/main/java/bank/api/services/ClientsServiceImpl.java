@@ -1,8 +1,7 @@
 package bank.api.services;
 
-import bank.api.dao.ClientsDao;
 import bank.api.entities.Clients;
-import lombok.NonNull;
+import bank.api.repository.ClientsRepo;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,21 +12,21 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ClientsServiceImpl implements ClientsService {
 
-    private final @NonNull ClientsDao clientsDao;
-    private static final   Logger     LOGGER = LoggerFactory.getLogger(CardsServiceImpl.class);
+    private final        ClientsRepo clientsRepo;
+    private static final Logger      LOGGER = LoggerFactory.getLogger(CardsServiceImpl.class);
 
     @Override
     @Transactional
     public void addClient(Clients clients) {
         LOGGER.debug("Start addClient method in ClientsServiceImpl...");
-        clientsDao.addClient(clients);
+        clientsRepo.save(clients);
     }
 
     @Override
     @Transactional
     public void deleteClients(Clients clients) {
         LOGGER.debug("Start deleteClient method in ClientsServiceImpl...");
-        clientsDao.deleteClients(clients);
+        clientsRepo.delete(clients);
     }
 
 }

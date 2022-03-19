@@ -9,12 +9,18 @@ import bank.api.entities.Clients;
 public interface ClientsService {
 
     /**
-     * @param clients
+     * Данный метод позволяет добавить нового клиента
+     * в базу данных
+     *
+     * @param clients клиент, которого необзодимо добавить
      */
     void addClient(Clients clients);
 
     /**
-     * @param clients
+     * Данный метод позволяет удалить
+     * существующего клиента из базы данных
+     *
+     * @param clients клиент, которого необходимо удалить
      */
     void deleteClients(Clients clients);
 

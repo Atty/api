@@ -9,13 +9,18 @@ import bank.api.entities.BankAccounts;
 public interface BankAccountsService {
 
     /**
-     * @param idClients
-     * @param bankAccounts
+     * Данный метод позволяет добавить новый счет в базу данных
+     * привязывая его к определенному клиенту по его идентификатору
+     *
+     * @param idClients    идентификатор клиента которому надо добавить Счет
+     * @param bankAccounts счет, который нужно добавить
      */
-    void addBankAccounts(int idClients, BankAccounts bankAccounts);
+    void addBankAccounts(long idClients, BankAccounts bankAccounts);
 
     /**
-     * @param bankAccounts
+     * Данный метод позволяет удалить существующий счет из базы данных
+     *
+     * @param bankAccounts счет, который нужно удалить
      */
     void removeBankAccounts(BankAccounts bankAccounts);
 }
