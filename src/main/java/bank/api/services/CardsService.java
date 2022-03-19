@@ -4,9 +4,6 @@ import bank.api.entities.Cards;
 
 import java.util.List;
 
-/**
- * For future extension
- */
 public interface CardsService {
 
     /**
@@ -15,7 +12,7 @@ public interface CardsService {
      * @param bankAccountNumber Счет к которому добавляется карта
      * @return метод возвращает созданную карту при успешном добавлении
      */
-    Cards addCards(String bankAccountNumber);
+    Cards addCards(long bankAccountNumber);
 
     /**
      * Данный метод позволяет удалить существующую карту из базы данных
@@ -50,4 +47,11 @@ public interface CardsService {
      * @return возвращается сумма которая находится на счете в данный момент
      */
     int checkBalance(long cardNumber);
+
+    /**
+     * Данный метод позволяет получить список всех карт
+     *
+     * @return список всех карт
+     */
+    List<Cards> getListOfAllCards();
 }

@@ -14,6 +14,7 @@ import java.text.DecimalFormat;
 @Entity
 @Table(name = "cards")
 @Getter
+@Setter
 @NoArgsConstructor
 public class Cards {
 
@@ -25,13 +26,11 @@ public class Cards {
     @Version
     private long version;
 
-    @Setter
     @Column(name = "number")
     private long number;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_bank_account")
-    @Setter
     @JsonIgnore
     private BankAccounts bankAccounts;
 

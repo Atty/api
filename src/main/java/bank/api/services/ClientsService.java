@@ -3,6 +3,8 @@ package bank.api.services;
 
 import bank.api.entities.Clients;
 
+import java.util.List;
+
 /**
  * For future extension
  */
@@ -23,5 +25,12 @@ public interface ClientsService {
      * @param clients клиент, которого необходимо удалить
      */
     void deleteClients(Clients clients);
+
+    /**
+     * Данный метод позволяет получить список всех клиентов
+     *
+     * @return список всех клиентов
+     */
+    List<Clients> getListOfAllClients();
 
 }

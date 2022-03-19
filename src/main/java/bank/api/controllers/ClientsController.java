@@ -12,19 +12,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static bank.api.util.Converter.toDto;
+
 @RestController
 @RequestMapping("/clients")
 @RequiredArgsConstructor
 public class ClientsController {
 
     private final CardsService cardsService;
-    private final Converter    converter;
 
     @GetMapping("{clientsName}")
     public ResponseEntity<List<CardsDto>> getAllCards(@PathVariable String clientsName) {
         List<CardsDto> cardsDtoList = cardsService.getCardsByClient(clientsName)
                 .stream()
-                .map(converter::toDto)
+                .map(Converter::toDto)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(cardsDtoList, HttpStatus.OK);
     }
@@ -36,7 +37,7 @@ public class ClientsController {
 
     @PostMapping()
     public ResponseEntity<CardsDto> addNewCard(@RequestBody CompositeDto compositeDto) {
-        CardsDto cardsDto = converter.toDto(cardsService.addCards(compositeDto.getAccountNumber()));
+        CardsDto cardsDto = toDto(cardsService.addCards(compositeDto.getAccountNumber()));
         return new ResponseEntity<>(cardsDto, HttpStatus.OK);
     }
 

@@ -15,7 +15,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleIncorrectInputException(IncorrectInputException e) {
         HttpStatus   badRequest   = HttpStatus.BAD_REQUEST;
         ApiException apiException = new ApiException(e.getMessage(), badRequest, ZonedDateTime.now(ZoneId.of("Z")));
-
         return new ResponseEntity<>(apiException, badRequest);
     }
 
@@ -23,7 +22,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleNotFoundException(NotFoundException e) {
         HttpStatus   notFound     = HttpStatus.NOT_FOUND;
         ApiException apiException = new ApiException(e.getMessage(), notFound, ZonedDateTime.now(ZoneId.of("Z")));
-
         return new ResponseEntity<>(apiException, notFound);
     }
 

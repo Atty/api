@@ -12,6 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "bank_accounts")
 @Getter
+@Setter
 @NoArgsConstructor
 public class BankAccounts {
 
@@ -23,17 +24,14 @@ public class BankAccounts {
     @Version
     private long version;
 
-    @Setter
     @Column(name = "number")
     private String number;
 
-    @Setter
     @Column(name = "balance")
     private int balance;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_client")
-    @Setter
     @JsonIgnore
     private Clients clients;
 
@@ -59,6 +57,10 @@ public class BankAccounts {
 
     public void removeCards(Cards card) {
         cardsList.remove(card);
+    }
+
+    public void addMoney(int value) {
+        balance += value;
     }
 
     @JsonIgnore

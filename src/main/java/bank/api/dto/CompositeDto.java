@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class CompositeDto {
 
     private String clientName;
-    private String accountNumber;
+    private long   accountNumber;
     private int    amountOfMoney; //сумма которую клиент хочет положить на счет
     private long   cardNumber;
 }

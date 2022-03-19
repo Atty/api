@@ -11,18 +11,20 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "clients")
 public class Clients {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private long id;
 
     @Version
     private long version;
 
-    @Setter
+    @Column(name = "name")
     private String name;
 
     @OneToMany(
@@ -56,7 +58,7 @@ public class Clients {
     @Override
     public String toString() {
         return "Clients{" +
-                "number='" + name + '\'' +
+                "name='" + name + '\'' +
                 '}';
     }
 }

@@ -3,9 +3,8 @@ package bank.api.services;
 
 import bank.api.entities.BankAccounts;
 
-/**
- * For future extension
- */
+import java.util.List;
+
 public interface BankAccountsService {
 
     /**
@@ -23,4 +22,11 @@ public interface BankAccountsService {
      * @param bankAccounts счет, который нужно удалить
      */
     void removeBankAccounts(BankAccounts bankAccounts);
+
+    /**
+     * Данный метод позволяет получить список всех счетов в базе данных
+     *
+     * @return Список всех счетов
+     */
+    List<BankAccounts> getListOfAllBankAccounts();
 }
