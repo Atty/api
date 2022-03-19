@@ -1,11 +1,11 @@
 package bank.api.dao;
 
 
-import bank.api.customExceptions.IncorrectInputException;
-import bank.api.customExceptions.NotFoundException;
 import bank.api.entities.BankAccounts;
 import bank.api.entities.Cards;
 import bank.api.entities.Clients;
+import bank.api.exceptions.IncorrectInputException;
+import bank.api.exceptions.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -29,7 +29,7 @@ public class CardsDaoImpl implements CardsDao {
             Long.parseLong(bankAccountNumber);
         } catch (Exception e) {
             LOGGER.error("AddCards error, incorrect number", e);
-            throw new IncorrectInputException();
+            throw new IncorrectInputException("Incorrect bankAccountNumber");
         }
         try {
             Cards card = entityManager
@@ -45,7 +45,7 @@ public class CardsDaoImpl implements CardsDao {
             return newCard;
         } catch (Exception e) {
             LOGGER.error("AddCards error, not found", e);
-            throw new NotFoundException();
+            throw new NotFoundException("Cards not found");
         }
     }
 
@@ -75,14 +75,14 @@ public class CardsDaoImpl implements CardsDao {
                     .collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error("GetCardsByClient error, not found", e);
-            throw new NotFoundException();
+            throw new NotFoundException("Cards not found");
         }
     }
 
     @Override
     public void addFundsByCard(long cardNumber, int value) {
         LOGGER.debug("Start addFundsByCards method in CardsDaoImpl...");
-        if (cardNumber < 0 || value < 0) throw new IncorrectInputException();
+        if (cardNumber < 0 || value < 0) throw new IncorrectInputException("Incorrect cardNumber or value");
         try {
             Cards card = entityManager.createQuery("from Cards where number =: cardNumber", Cards.class)
                     .setParameter("cardNumber", cardNumber)
@@ -91,14 +91,14 @@ public class CardsDaoImpl implements CardsDao {
             entityManager.merge(card);
         } catch (Exception e) {
             LOGGER.error("AddFundsByCards error, not found", e);
-            throw new NotFoundException();
+            throw new NotFoundException("Card not found");
         }
     }
 
     @Override
     public int checkBalance(long cardNumber) {
         LOGGER.debug("Start checkBalance method in CardsDaoImpl...");
-        if (cardNumber < 0) throw new IncorrectInputException();
+        if (cardNumber < 0) throw new IncorrectInputException("Incorrect cardNumber");
         try {
             Cards card = entityManager
                     .createQuery("from Cards where number =: cardNumber", Cards.class)
@@ -107,7 +107,7 @@ public class CardsDaoImpl implements CardsDao {
             return card.getBankAccounts().getBalance();
         } catch (Exception e) {
             LOGGER.error("CheckBalance error, not found", e);
-            throw new NotFoundException();
+            throw new NotFoundException("Card not found");
         }
     }
 }
