@@ -3,6 +3,7 @@ package bank.api.services.implementations;
 import bank.api.entities.BankAccounts;
 import bank.api.entities.Cards;
 import bank.api.entities.Clients;
+import bank.api.exceptions.DataBaseException;
 import bank.api.repository.BankAccountsRepo;
 import bank.api.repository.CardsRepo;
 import bank.api.repository.ClientsRepo;
@@ -31,57 +32,87 @@ public class CardsServiceImpl implements CardsService {
     @Override
     @Transactional
     public Cards addCards(long bankAccountNumber) {
-        logger.debug("Start addCards method in CardsServiceImpl...");
+        logger.debug("CardsServiceImpl.addCards: add card for bank account " + bankAccountNumber);
         validateBankAccountNumber(bankAccountNumber);
-        Cards cards = new Cards(cardsRepo.getMaxCardsNumber() + 1);
-        cardsRepo.save(cards);
-        BankAccounts bankAccounts = bankAccountsRepo.findBankAccountsByNumber(String.valueOf(bankAccountNumber));
-        bankAccounts.addCards(cards);
-        return cards;
+        try {
+            Cards cards = new Cards(cardsRepo.getMaxCardsNumber() + 1);
+            cardsRepo.save(cards);
+            BankAccounts bankAccounts = bankAccountsRepo.findBankAccountsByNumber(String.valueOf(bankAccountNumber));
+            bankAccounts.addCards(cards);
+            return cards;
+        } catch (Exception e) {
+            logger.error("CardsServiceImpl.addCards: " + e.getMessage());
+            throw new DataBaseException("Error during add card", e);
+        }
     }
 
     @Override
     @Transactional
     public void removeCards(Cards cards) {
-        logger.debug("Start removeCards method in CardsServiceImpl...");
-        cardsRepo.delete(cards);
-        cards.getBankAccounts().removeCards(cards);
+        logger.debug("CardsServiceImpl.removeCards: delete card " + cards);
+        try {
+            cardsRepo.delete(cards);
+            cards.getBankAccounts().removeCards(cards);
+        } catch (Exception e) {
+            logger.error("CardsServiceImpl.removeCards: " + e.getMessage());
+            throw new DataBaseException("Error during delete card", e);
+        }
     }
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Cards> getCardsByClient(String clientsName) {
-        logger.debug("Start getCardsByClient method in CardsServiceImpl...");
-        Clients clients = clientsRepo.findClientsByName(clientsName);
-        return clients.getBankAccountsList()
-                .stream()
-                .flatMap(n -> n.getCardsList().stream())
-                .collect(Collectors.toList());
+        logger.debug("CardsServiceImpl.getCardsByClient: get all client cards with clients name " + clientsName);
+        try {
+            Clients clients = clientsRepo.findClientsByName(clientsName);
+            return clients.getBankAccountsList()
+                    .stream()
+                    .flatMap(n -> n.getCardsList().stream())
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            logger.error("CardsServiceImpl.getCardsByClient: " + e.getMessage());
+            throw new DataBaseException("Error during get all cards", e);
+        }
     }
 
     @Override
     @Transactional
     public void addFundsByCard(long cardNumber, int value) {
-        logger.debug("Start addFundsByCard method in CardsServiceImpl...");
+        logger.debug("CardsServiceImpl.addFundsByCard: put money(" + value + ") on card " + cardNumber);
         validateCardNumber(cardNumber);
         validateValue(value);
-        Cards cards = cardsRepo.findCardsByNumber(cardNumber);
-        cards.getBankAccounts().addMoney(value);
-        cardsRepo.save(cards);
+        try {
+            Cards cards = cardsRepo.findCardsByNumber(cardNumber);
+            cards.getBankAccounts().addMoney(value);
+            cardsRepo.save(cards);
+        } catch (Exception e) {
+            logger.error("CardsServiceImpl.addFundsByCard: " + e.getMessage());
+            throw new DataBaseException("Error during put money on card", e);
+        }
     }
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public int checkBalance(long cardNumber) {
-        logger.debug("Start checkBalance method in CardsServiceImpl...");
+        logger.debug("CardsServiceImpl.checkBalance: check balance on card " + cardNumber);
         validateCardNumber(cardNumber);
-        Cards cards = cardsRepo.findCardsByNumber(cardNumber);
-        return cards.getBankAccounts().getBalance();
+        try {
+            Cards cards = cardsRepo.findCardsByNumber(cardNumber);
+            return cards.getBankAccounts().getBalance();
+        } catch (Exception e) {
+            logger.error("CardsServiceImpl.checkBalance: " + e.getMessage());
+            throw new DataBaseException("Error during check balance", e);
+        }
     }
 
     @Override
     public List<Cards> getListOfAllCards() {
-        logger.debug("Start getListOfAllCards method in CardsServiceImpl...");
-        return cardsRepo.findAll();
+        logger.debug("CardsServiceImpl.getListOfAllCards: get all cards");
+        try {
+            return cardsRepo.findAll();
+        } catch (Exception e) {
+            logger.error("CardsServiceImpl.getListOfAllCards: " + e.getMessage());
+            throw new DataBaseException("Error during get all cards", e);
+        }
     }
 }

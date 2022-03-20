@@ -13,17 +13,22 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(value = {IncorrectInputException.class})
     public ResponseEntity<Object> handleIncorrectInputException(IncorrectInputException e) {
-        HttpStatus   badRequest   = HttpStatus.BAD_REQUEST;
-        ApiException apiException = new ApiException(e.getMessage(), badRequest, ZonedDateTime.now(ZoneId.of("Z")));
-        return new ResponseEntity<>(apiException, badRequest);
+        return createExceptionResponse(HttpStatus.BAD_REQUEST, e);
     }
 
     @ExceptionHandler(value = {NotFoundException.class})
     public ResponseEntity<Object> handleNotFoundException(NotFoundException e) {
-        HttpStatus   notFound     = HttpStatus.NOT_FOUND;
-        ApiException apiException = new ApiException(e.getMessage(), notFound, ZonedDateTime.now(ZoneId.of("Z")));
-        return new ResponseEntity<>(apiException, notFound);
+        return createExceptionResponse(HttpStatus.NOT_FOUND, e);
     }
 
+    @ExceptionHandler(value = {DataBaseException.class})
+    public ResponseEntity<Object> handleDataBaseException(DataBaseException e) {
+        return createExceptionResponse(HttpStatus.BAD_REQUEST, e);
+    }
+
+    private ResponseEntity<Object> createExceptionResponse(HttpStatus status, Throwable e) {
+        ApiException apiException = new ApiException(e.getMessage(), status, ZonedDateTime.now(ZoneId.of("Z")));
+        return new ResponseEntity<>(apiException, status);
+    }
 
 }

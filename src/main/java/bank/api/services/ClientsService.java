@@ -5,9 +5,6 @@ import bank.api.entities.Clients;
 
 import java.util.List;
 
-/**
- * For future extension
- */
 public interface ClientsService {
 
     /**
