@@ -1,6 +1,7 @@
 package bank.api.services;
 
 
+import bank.api.dto.BankAccountsDto;
 import bank.api.entities.BankAccounts;
 
 import java.util.List;
@@ -28,5 +29,5 @@ public interface BankAccountsService {
      *
      * @return Список всех счетов
      */
-    List<BankAccounts> getListOfAllBankAccounts();
+    List<BankAccountsDto> getListOfAllBankAccounts();
 }

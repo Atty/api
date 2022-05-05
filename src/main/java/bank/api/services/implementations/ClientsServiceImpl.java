@@ -1,9 +1,11 @@
 package bank.api.services.implementations;
 
+import bank.api.dto.ClientsDto;
 import bank.api.entities.Clients;
 import bank.api.exceptions.DataBaseException;
-import bank.api.repository.ClientsRepo;
+import bank.api.repositories.ClientsRepo;
 import bank.api.services.ClientsService;
+import bank.api.utils.Converter;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,10 +47,12 @@ public class ClientsServiceImpl implements ClientsService {
     }
 
     @Override
-    public List<Clients> getListOfAllClients() {
+    public List<ClientsDto> getListOfAllClients() {
         logger.debug("ClientsServiceImpl.getListOfAllClients: get all clients");
         try {
-            return clientsRepo.findAll();
+            return clientsRepo.findAll().stream()
+                    .map(Converter::toDto)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             logger.error("ClientsServiceImpl.getListOfAllClients: " + e.getMessage());
             throw new DataBaseException("Error during get all clients", e);

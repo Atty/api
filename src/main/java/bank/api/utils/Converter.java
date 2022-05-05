@@ -1,4 +1,4 @@
-package bank.api.util;
+package bank.api.utils;
 
 import bank.api.dto.BankAccountsDto;
 import bank.api.dto.CardsDto;
@@ -6,7 +6,6 @@ import bank.api.dto.ClientsDto;
 import bank.api.entities.BankAccounts;
 import bank.api.entities.Cards;
 import bank.api.entities.Clients;
-import org.springframework.stereotype.Component;
 
 
 public class Converter {

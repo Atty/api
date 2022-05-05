@@ -7,10 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
-/**
- * Этот класс только для необычных запросов от клиента
- * когда нужно получить 2 поля из разных классов
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

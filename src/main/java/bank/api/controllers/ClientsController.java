@@ -3,16 +3,12 @@ package bank.api.controllers;
 import bank.api.dto.CardsDto;
 import bank.api.dto.CompositeDto;
 import bank.api.services.CardsService;
-import bank.api.util.Converter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static bank.api.util.Converter.toDto;
 
 @RestController
 @RequestMapping("/clients")
@@ -23,10 +19,7 @@ public class ClientsController {
 
     @GetMapping("{clientsName}")
     public ResponseEntity<List<CardsDto>> getAllCards(@PathVariable String clientsName) {
-        List<CardsDto> cardsDtoList = cardsService.getCardsByClient(clientsName)
-                .stream()
-                .map(Converter::toDto)
-                .collect(Collectors.toList());
+        List<CardsDto> cardsDtoList = cardsService.getCardsByClient(clientsName);
         return new ResponseEntity<>(cardsDtoList, HttpStatus.OK);
     }
 
@@ -37,7 +30,7 @@ public class ClientsController {
 
     @PostMapping()
     public ResponseEntity<CardsDto> addNewCard(@RequestBody CompositeDto compositeDto) {
-        CardsDto cardsDto = toDto(cardsService.addCards(compositeDto.getAccountNumber()));
+        CardsDto cardsDto = cardsService.addCards(compositeDto.getAccountNumber());
         return new ResponseEntity<>(cardsDto, HttpStatus.OK);
     }
 

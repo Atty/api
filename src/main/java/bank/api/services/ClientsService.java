@@ -1,6 +1,7 @@
 package bank.api.services;
 
 
+import bank.api.dto.ClientsDto;
 import bank.api.entities.Clients;
 
 import java.util.List;
@@ -28,6 +29,6 @@ public interface ClientsService {
      *
      * @return список всех клиентов
      */
-    List<Clients> getListOfAllClients();
+    List<ClientsDto> getListOfAllClients();
 
 }

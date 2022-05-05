@@ -1,12 +1,14 @@
 package bank.api.services.implementations;
 
+import bank.api.dto.BankAccountsDto;
 import bank.api.entities.BankAccounts;
 import bank.api.entities.Clients;
 import bank.api.exceptions.DataBaseException;
 import bank.api.exceptions.NotFoundException;
-import bank.api.repository.BankAccountsRepo;
-import bank.api.repository.ClientsRepo;
+import bank.api.repositories.BankAccountsRepo;
+import bank.api.repositories.ClientsRepo;
 import bank.api.services.BankAccountsService;
+import bank.api.utils.Converter;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -54,10 +57,12 @@ public class BankAccountsServiceImpl implements BankAccountsService {
     }
 
     @Override
-    public List<BankAccounts> getListOfAllBankAccounts() {
+    public List<BankAccountsDto> getListOfAllBankAccounts() {
         logger.debug("BankAccountsServiceImpl.getListOfAllBankAccounts: get all bank accounts");
         try {
-            return bankAccountsRepo.findAll();
+            return bankAccountsRepo.findAll().stream()
+                    .map(Converter::toDto)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             logger.error("BankAccountsServiceImpl.getListOfAllBankAccounts: " + e.getMessage());
             throw new DataBaseException("Error during get all bank accounts", e);

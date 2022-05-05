@@ -1,4 +1,4 @@
-package bank.api.util;
+package bank.api.utils;
 
 import bank.api.exceptions.IncorrectInputException;
 

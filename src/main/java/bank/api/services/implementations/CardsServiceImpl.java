@@ -1,13 +1,15 @@
 package bank.api.services.implementations;
 
+import bank.api.dto.CardsDto;
 import bank.api.entities.BankAccounts;
 import bank.api.entities.Cards;
 import bank.api.entities.Clients;
 import bank.api.exceptions.DataBaseException;
-import bank.api.repository.BankAccountsRepo;
-import bank.api.repository.CardsRepo;
-import bank.api.repository.ClientsRepo;
+import bank.api.repositories.BankAccountsRepo;
+import bank.api.repositories.CardsRepo;
+import bank.api.repositories.ClientsRepo;
 import bank.api.services.CardsService;
+import bank.api.utils.Converter;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static bank.api.util.Validator.*;
+import static bank.api.utils.Validator.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,15 +33,14 @@ public class CardsServiceImpl implements CardsService {
 
     @Override
     @Transactional
-    public Cards addCards(long bankAccountNumber) {
+    public CardsDto addCards(long bankAccountNumber) {
         logger.debug("CardsServiceImpl.addCards: add card for bank account " + bankAccountNumber);
         validateBankAccountNumber(bankAccountNumber);
         try {
-            Cards cards = new Cards(cardsRepo.getMaxCardsNumber() + 1);
-            cardsRepo.save(cards);
+            Cards        card         = cardsRepo.save(new Cards(cardsRepo.getMaxCardsNumber() + 1));
             BankAccounts bankAccounts = bankAccountsRepo.findBankAccountsByNumber(String.valueOf(bankAccountNumber));
-            bankAccounts.addCards(cards);
-            return cards;
+            bankAccounts.addCards(card);
+            return Converter.toDto(card);
         } catch (Exception e) {
             logger.error("CardsServiceImpl.addCards: " + e.getMessage());
             throw new DataBaseException("Error during add card", e);
@@ -61,13 +62,14 @@ public class CardsServiceImpl implements CardsService {
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public List<Cards> getCardsByClient(String clientsName) {
+    public List<CardsDto> getCardsByClient(String clientsName) {
         logger.debug("CardsServiceImpl.getCardsByClient: get all client cards with clients name " + clientsName);
         try {
             Clients clients = clientsRepo.findClientsByName(clientsName);
             return clients.getBankAccountsList()
                     .stream()
                     .flatMap(n -> n.getCardsList().stream())
+                    .map(Converter::toDto)
                     .collect(Collectors.toList());
         } catch (Exception e) {
             logger.error("CardsServiceImpl.getCardsByClient: " + e.getMessage());
@@ -106,10 +108,12 @@ public class CardsServiceImpl implements CardsService {
     }
 
     @Override
-    public List<Cards> getListOfAllCards() {
+    public List<CardsDto> getListOfAllCards() {
         logger.debug("CardsServiceImpl.getListOfAllCards: get all cards");
         try {
-            return cardsRepo.findAll();
+            return cardsRepo.findAll().stream()
+                    .map(Converter::toDto)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             logger.error("CardsServiceImpl.getListOfAllCards: " + e.getMessage());
             throw new DataBaseException("Error during get all cards", e);

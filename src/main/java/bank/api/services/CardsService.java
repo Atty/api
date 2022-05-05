@@ -1,5 +1,6 @@
 package bank.api.services;
 
+import bank.api.dto.CardsDto;
 import bank.api.entities.Cards;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface CardsService {
      * @param bankAccountNumber Счет к которому добавляется карта
      * @return метод возвращает созданную карту при успешном добавлении
      */
-    Cards addCards(long bankAccountNumber);
+    CardsDto addCards(long bankAccountNumber);
 
     /**
      * Данный метод позволяет удалить существующую карту из базы данных
@@ -28,7 +29,7 @@ public interface CardsService {
      * @param clientsName имя клиента, чьи карты нужно получить
      * @return возвращает лист карт указанного клиента
      */
-    List<Cards> getCardsByClient(String clientsName);
+    List<CardsDto> getCardsByClient(String clientsName);
 
     /**
      * Данный метод пополняет баланс счета к которому привязана карта
@@ -53,5 +54,5 @@ public interface CardsService {
      *
      * @return список всех карт
      */
-    List<Cards> getListOfAllCards();
+    List<CardsDto> getListOfAllCards();
 }
