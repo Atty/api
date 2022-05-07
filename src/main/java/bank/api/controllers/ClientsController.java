@@ -1,7 +1,6 @@
 package bank.api.controllers;
 
 import bank.api.dto.CardsDto;
-import bank.api.dto.CompositeDto;
 import bank.api.services.CardsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,19 +23,19 @@ public class ClientsController {
     }
 
     @GetMapping()
-    public ResponseEntity<Integer> checkAccountBalance(@RequestParam long cardNumber) {
+    public ResponseEntity<Integer> checkAccountBalance(@RequestParam String cardNumber) {
         return new ResponseEntity<>(cardsService.checkBalance(cardNumber), HttpStatus.OK);
     }
 
     @PostMapping("/addCard")
-    public ResponseEntity<CardsDto> addNewCard(@RequestBody CompositeDto compositeDto) {
-        CardsDto cardsDto = cardsService.addCards(compositeDto.getAccountNumber());
+    public ResponseEntity<CardsDto> addNewCard(@RequestBody String accountNumber) {
+        CardsDto cardsDto = cardsService.addCards(accountNumber);
         return new ResponseEntity<>(cardsDto, HttpStatus.OK);
     }
 
     @PostMapping("/addFunds")
-    public ResponseEntity<String> addFundsOnCard(@RequestBody CompositeDto compositeDto) {
-        cardsService.addFundsByCard(compositeDto.getCardNumber(), compositeDto.getAmountOfMoney());
+    public ResponseEntity<String> addFundsOnCard(@RequestBody CardsDto cardsDto) {
+        cardsService.addFundsByCard(cardsDto.getNumber(), cardsDto.getFunds());
         return new ResponseEntity<>("Счет успешно пополнен!", HttpStatus.OK);
     }
 }

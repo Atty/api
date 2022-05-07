@@ -32,7 +32,8 @@ public class BankAccountsServiceImpl implements BankAccountsService {
         logger.debug("BankAccountsServiceImpl.addBankAccounts: add new bank account " + bankAccounts + " for client with id " + idClients);
         try {
             bankAccountsRepo.save(bankAccounts);
-            Clients clients = clientsRepo.findById(idClients).orElseThrow(() -> new NotFoundException("Clients with id: " + idClients + " not found"));
+            Clients clients = clientsRepo.findById(idClients)
+                    .orElseThrow(() -> new NotFoundException("Clients with id: " + idClients + " not found"));
             clients.addBankAccounts(bankAccounts);
         } catch (NotFoundException e) {
             logger.error("BankAccountsServiceImpl.addBankAccounts: " + e.getMessage());
@@ -60,7 +61,8 @@ public class BankAccountsServiceImpl implements BankAccountsService {
     public List<BankAccountsDto> getListOfAllBankAccounts() {
         logger.debug("BankAccountsServiceImpl.getListOfAllBankAccounts: get all bank accounts");
         try {
-            return bankAccountsRepo.findAll().stream()
+            return bankAccountsRepo.findAll()
+                    .stream()
                     .map(ConverterDto::toDto)
                     .collect(Collectors.toList());
         } catch (Exception e) {

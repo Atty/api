@@ -50,7 +50,8 @@ public class ClientsServiceImpl implements ClientsService {
     public List<ClientsDto> getListOfAllClients() {
         logger.debug("ClientsServiceImpl.getListOfAllClients: get all clients");
         try {
-            return clientsRepo.findAll().stream()
+            return clientsRepo.findAll()
+                    .stream()
                     .map(ConverterDto::toDto)
                     .collect(Collectors.toList());
         } catch (Exception e) {

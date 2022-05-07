@@ -4,21 +4,35 @@ import bank.api.exceptions.IncorrectInputException;
 
 public class Validator {
 
-    public static void validateCardNumber(long number) {
-        if (number < 1000_0000_0000_0000L || number >= 1_0000_0000_0000_0000L) {
-            throw new IncorrectInputException("Incorrect card number");
-        }
+    public static void validateCardNumber(String number) {
+        validateCardAndAccountNumber(number, "Incorrect card number");
     }
 
-    public static void validateValue(int value) {
-        if (value <= 0) {
-            throw new IncorrectInputException("Incorrect value");
+    public static int validateValue(String value) {
+        int check = 0;
+        try {
+            check = Integer.parseInt(value);
+            if (check <= 0) {
+                throw new IncorrectInputException("Incorrect value");
+            }
+        } catch (NumberFormatException e) {
+            throw new IncorrectInputException("Incorrect value", e);
         }
+        return check;
     }
 
-    public static void validateBankAccountNumber(long number) {
-        if (number < 1000_0000_0000_0000L || number >= 1_0000_0000_0000_0000L) {
-            throw new IncorrectInputException("Incorrect bank account number");
+    public static void validateBankAccountNumber(String number) {
+        validateCardAndAccountNumber(number, "Incorrect bank account number");
+    }
+
+    private static void validateCardAndAccountNumber(String number, String error) {
+        try {
+            long check = Long.parseLong(number);
+            if (check < 1000_0000_0000_0000L || check >= 1_0000_0000_0000_0000L) {
+                throw new IncorrectInputException(error);
+            }
+        } catch (NumberFormatException e) {
+            throw new IncorrectInputException(error, e);
         }
     }
 }

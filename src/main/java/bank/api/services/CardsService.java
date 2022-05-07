@@ -13,7 +13,7 @@ public interface CardsService {
      * @param bankAccountNumber Счет к которому добавляется карта
      * @return метод возвращает созданную карту при успешном добавлении
      */
-    CardsDto addCards(long bankAccountNumber);
+    CardsDto addCards(String bankAccountNumber);
 
     /**
      * Данный метод позволяет удалить существующую карту из базы данных
@@ -38,7 +38,7 @@ public interface CardsService {
      * @param cardNumber карта через которую происходит пополение
      * @param value      сумма на которую необходимо пополнить
      */
-    void addFundsByCard(long cardNumber, int value);
+    void addFundsByCard(String cardNumber, String value);
 
     /**
      * Данный метод позволяет проверить баланс средств на счете к которому привязана
@@ -47,7 +47,7 @@ public interface CardsService {
      * @param cardNumber карта с помощью котороый необходимо узнать баланс
      * @return возвращается сумма которая находится на счете в данный момент
      */
-    int checkBalance(long cardNumber);
+    int checkBalance(String cardNumber);
 
     /**
      * Данный метод позволяет получить список всех карт

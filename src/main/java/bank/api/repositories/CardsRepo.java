@@ -15,5 +15,5 @@ public interface CardsRepo extends JpaRepository<Cards, Long> {
     @Query("select c " +
             "from Cards c " +
             "where c.number = ?1")
-    Cards findCardsByNumber(long number);
+    Cards findCardsByNumber(String number);
 }

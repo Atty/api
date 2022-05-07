@@ -33,12 +33,12 @@ public class CardsServiceImpl implements CardsService {
 
     @Override
     @Transactional
-    public CardsDto addCards(long bankAccountNumber) {
+    public CardsDto addCards(String bankAccountNumber) {
         logger.debug("CardsServiceImpl.addCards: add card for bank account " + bankAccountNumber);
         validateBankAccountNumber(bankAccountNumber);
         try {
             Cards        card         = cardsRepo.save(new Cards(cardsRepo.getMaxCardsNumber() + 1));
-            BankAccounts bankAccounts = bankAccountsRepo.findBankAccountsByNumber(String.valueOf(bankAccountNumber));
+            BankAccounts bankAccounts = bankAccountsRepo.findBankAccountsByNumber(bankAccountNumber);
             bankAccounts.addCards(card);
             return ConverterDto.toDto(card);
         } catch (Exception e) {
@@ -79,13 +79,13 @@ public class CardsServiceImpl implements CardsService {
 
     @Override
     @Transactional
-    public void addFundsByCard(long cardNumber, int value) {
+    public void addFundsByCard(String cardNumber, String value) {
         logger.debug("CardsServiceImpl.addFundsByCard: put money(" + value + ") on card " + cardNumber);
         validateCardNumber(cardNumber);
-        validateValue(value);
+        int checkedValue = validateValue(value);
         try {
             Cards cards = cardsRepo.findCardsByNumber(cardNumber);
-            cards.getBankAccounts().addMoney(value);
+            cards.getBankAccounts().addMoney(checkedValue);
             cardsRepo.save(cards);
         } catch (Exception e) {
             logger.error("CardsServiceImpl.addFundsByCard: " + e.getMessage());
@@ -95,7 +95,7 @@ public class CardsServiceImpl implements CardsService {
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public int checkBalance(long cardNumber) {
+    public int checkBalance(String cardNumber) {
         logger.debug("CardsServiceImpl.checkBalance: check balance on card " + cardNumber);
         validateCardNumber(cardNumber);
         try {
@@ -111,7 +111,8 @@ public class CardsServiceImpl implements CardsService {
     public List<CardsDto> getListOfAllCards() {
         logger.debug("CardsServiceImpl.getListOfAllCards: get all cards");
         try {
-            return cardsRepo.findAll().stream()
+            return cardsRepo.findAll()
+                    .stream()
                     .map(ConverterDto::toDto)
                     .collect(Collectors.toList());
         } catch (Exception e) {

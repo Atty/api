@@ -1,5 +1,6 @@
 package bank.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,8 +8,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CardsDto {
 
-    private long id;
-    private long number;
+    private String number;
+    private String funds;
+
+    public CardsDto(String number) {
+        this.number = number;
+    }
 }
