@@ -5,7 +5,7 @@ import bank.api.entities.Clients;
 import bank.api.exceptions.DataBaseException;
 import bank.api.repositories.ClientsRepo;
 import bank.api.services.ClientsService;
-import bank.api.utils.Converter;
+import bank.api.utils.ConverterDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,7 @@ public class ClientsServiceImpl implements ClientsService {
         logger.debug("ClientsServiceImpl.getListOfAllClients: get all clients");
         try {
             return clientsRepo.findAll().stream()
-                    .map(Converter::toDto)
+                    .map(ConverterDto::toDto)
                     .collect(Collectors.toList());
         } catch (Exception e) {
             logger.error("ClientsServiceImpl.getListOfAllClients: " + e.getMessage());

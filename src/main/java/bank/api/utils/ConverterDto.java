@@ -8,7 +8,7 @@ import bank.api.entities.Cards;
 import bank.api.entities.Clients;
 
 
-public class Converter {
+public class ConverterDto {
 
     public static ClientsDto toDto(Clients clients) {
         return new ClientsDto(clients.getId(), clients.getName());

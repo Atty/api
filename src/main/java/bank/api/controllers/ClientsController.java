@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/clients")
+@RequestMapping("/api/v1/clients")
 @RequiredArgsConstructor
 public class ClientsController {
 
     private final CardsService cardsService;
 
-    @GetMapping("{clientsName}")
+    @GetMapping("/{clientsName}")
     public ResponseEntity<List<CardsDto>> getAllCards(@PathVariable String clientsName) {
         List<CardsDto> cardsDtoList = cardsService.getCardsByClient(clientsName);
         return new ResponseEntity<>(cardsDtoList, HttpStatus.OK);
@@ -28,13 +28,13 @@ public class ClientsController {
         return new ResponseEntity<>(cardsService.checkBalance(cardNumber), HttpStatus.OK);
     }
 
-    @PostMapping()
+    @PostMapping("/addCard")
     public ResponseEntity<CardsDto> addNewCard(@RequestBody CompositeDto compositeDto) {
         CardsDto cardsDto = cardsService.addCards(compositeDto.getAccountNumber());
         return new ResponseEntity<>(cardsDto, HttpStatus.OK);
     }
 
-    @PutMapping()
+    @PostMapping("/addFunds")
     public ResponseEntity<String> addFundsOnCard(@RequestBody CompositeDto compositeDto) {
         cardsService.addFundsByCard(compositeDto.getCardNumber(), compositeDto.getAmountOfMoney());
         return new ResponseEntity<>("Счет успешно пополнен!", HttpStatus.OK);

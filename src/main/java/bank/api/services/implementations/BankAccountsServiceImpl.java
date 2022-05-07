@@ -8,7 +8,7 @@ import bank.api.exceptions.NotFoundException;
 import bank.api.repositories.BankAccountsRepo;
 import bank.api.repositories.ClientsRepo;
 import bank.api.services.BankAccountsService;
-import bank.api.utils.Converter;
+import bank.api.utils.ConverterDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +61,7 @@ public class BankAccountsServiceImpl implements BankAccountsService {
         logger.debug("BankAccountsServiceImpl.getListOfAllBankAccounts: get all bank accounts");
         try {
             return bankAccountsRepo.findAll().stream()
-                    .map(Converter::toDto)
+                    .map(ConverterDto::toDto)
                     .collect(Collectors.toList());
         } catch (Exception e) {
             logger.error("BankAccountsServiceImpl.getListOfAllBankAccounts: " + e.getMessage());

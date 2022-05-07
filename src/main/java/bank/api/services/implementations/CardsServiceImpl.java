@@ -9,7 +9,7 @@ import bank.api.repositories.BankAccountsRepo;
 import bank.api.repositories.CardsRepo;
 import bank.api.repositories.ClientsRepo;
 import bank.api.services.CardsService;
-import bank.api.utils.Converter;
+import bank.api.utils.ConverterDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public class CardsServiceImpl implements CardsService {
             Cards        card         = cardsRepo.save(new Cards(cardsRepo.getMaxCardsNumber() + 1));
             BankAccounts bankAccounts = bankAccountsRepo.findBankAccountsByNumber(String.valueOf(bankAccountNumber));
             bankAccounts.addCards(card);
-            return Converter.toDto(card);
+            return ConverterDto.toDto(card);
         } catch (Exception e) {
             logger.error("CardsServiceImpl.addCards: " + e.getMessage());
             throw new DataBaseException("Error during add card", e);
@@ -69,7 +69,7 @@ public class CardsServiceImpl implements CardsService {
             return clients.getBankAccountsList()
                     .stream()
                     .flatMap(n -> n.getCardsList().stream())
-                    .map(Converter::toDto)
+                    .map(ConverterDto::toDto)
                     .collect(Collectors.toList());
         } catch (Exception e) {
             logger.error("CardsServiceImpl.getCardsByClient: " + e.getMessage());
@@ -112,7 +112,7 @@ public class CardsServiceImpl implements CardsService {
         logger.debug("CardsServiceImpl.getListOfAllCards: get all cards");
         try {
             return cardsRepo.findAll().stream()
-                    .map(Converter::toDto)
+                    .map(ConverterDto::toDto)
                     .collect(Collectors.toList());
         } catch (Exception e) {
             logger.error("CardsServiceImpl.getListOfAllCards: " + e.getMessage());
