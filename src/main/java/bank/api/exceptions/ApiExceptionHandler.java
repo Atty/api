@@ -21,8 +21,8 @@ public class ApiExceptionHandler {
         return createExceptionResponse(HttpStatus.NOT_FOUND, e);
     }
 
-    @ExceptionHandler(value = {DataBaseException.class})
-    public ResponseEntity<Object> handleDataBaseException(DataBaseException e) {
+    @ExceptionHandler(value = {WrongArgumentException.class})
+    public ResponseEntity<Object> handleDataBaseException(WrongArgumentException e) {
         return createExceptionResponse(HttpStatus.BAD_REQUEST, e);
     }
 
