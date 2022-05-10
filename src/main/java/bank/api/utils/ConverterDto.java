@@ -15,7 +15,7 @@ public class ConverterDto {
     }
 
     public static CardsDto toDto(Cards cards) {
-        return new CardsDto(String.valueOf(cards.getNumber()));
+        return new CardsDto(cards.getJsonNumber());
     }
 
     public static BankAccountsDto toDto(BankAccounts bankAccounts) {
