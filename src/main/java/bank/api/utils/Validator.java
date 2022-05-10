@@ -5,7 +5,7 @@ import bank.api.exceptions.IncorrectInputException;
 public class Validator {
 
     public static void validateCardNumber(String number) {
-        validateCardAndAccountNumber(number, "Incorrect card number");
+        validateCardAndAccountNumber(number, "Incorrect card number: " + number);
     }
 
     public static int validateValue(String value) {
@@ -13,16 +13,16 @@ public class Validator {
         try {
             check = Integer.parseInt(value);
             if (check <= 0) {
-                throw new IncorrectInputException("Incorrect value");
+                throw new IncorrectInputException("Incorrect value: " + value);
             }
         } catch (NumberFormatException e) {
-            throw new IncorrectInputException("Incorrect value", e);
+            throw new IncorrectInputException("Incorrect value: " + value, e);
         }
         return check;
     }
 
     public static void validateBankAccountNumber(String number) {
-        validateCardAndAccountNumber(number, "Incorrect bank account number");
+        validateCardAndAccountNumber(number, "Incorrect bank account number: " + number);
     }
 
     private static void validateCardAndAccountNumber(String number, String error) {
