@@ -12,17 +12,16 @@ public interface BankAccountsService {
      * Данный метод позволяет добавить новый счет в базу данных
      * привязывая его к определенному клиенту по его идентификатору
      *
-     * @param idClients    идентификатор клиента которому надо добавить Счет
-     * @param bankAccounts счет, который нужно добавить
+     * @param bankAccountsDto счет, который нужно добавить
      */
-    void addBankAccounts(long idClients, BankAccounts bankAccounts);
+    String addBankAccount(BankAccountsDto bankAccountsDto);
 
     /**
      * Данный метод позволяет удалить существующий счет из базы данных
      *
-     * @param bankAccounts счет, который нужно удалить
+     * @param bankAccountsDto счет, который нужно удалить
      */
-    void removeBankAccounts(BankAccounts bankAccounts);
+    String deleteBankAccount(BankAccountsDto bankAccountsDto);
 
     /**
      * Данный метод позволяет получить список всех счетов в базе данных

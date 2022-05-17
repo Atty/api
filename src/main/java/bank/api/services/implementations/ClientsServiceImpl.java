@@ -2,6 +2,7 @@ package bank.api.services.implementations;
 
 import bank.api.dto.ClientsDto;
 import bank.api.entities.Clients;
+import bank.api.exceptions.NotFoundException;
 import bank.api.repositories.ClientsRepo;
 import bank.api.services.ClientsService;
 import bank.api.utils.ConverterDto;
@@ -20,14 +21,18 @@ public class ClientsServiceImpl implements ClientsService {
 
     @Override
     @Transactional
-    public void addClient(Clients clients) {
-        clientsRepo.save(clients);
+    public String addClient(ClientsDto clientsDto) {
+        clientsRepo.save(new Clients(clientsDto.getName()));
+        return "Клиент успешно добавлен!";
     }
 
     @Override
     @Transactional
-    public void deleteClients(Clients clients) {
-        clientsRepo.delete(clients);
+    public String deleteClient(ClientsDto clientsDto) {
+        Clients client = clientsRepo.findClientsByName(clientsDto.getName())
+                .orElseThrow(() -> new NotFoundException("Clients with name: \"" + clientsDto.getName() + "\" not found"));
+        clientsRepo.delete(client);
+        return "Клиент успешно удален!";
     }
 
     @Override

@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static bank.api.utils.Validator.validateBankAccountNumber;
+
 @Service
 @RequiredArgsConstructor
 public class BankAccountsServiceImpl implements BankAccountsService {
@@ -24,18 +26,25 @@ public class BankAccountsServiceImpl implements BankAccountsService {
 
     @Override
     @Transactional
-    public void addBankAccounts(long idClients, BankAccounts bankAccounts) {
-        bankAccountsRepo.save(bankAccounts);
-        Clients clients = clientsRepo.findById(idClients)
-                .orElseThrow(() -> new NotFoundException("Clients with id: " + idClients + " not found"));
-        clients.addBankAccounts(bankAccounts);
+    public String addBankAccount(BankAccountsDto bankAccountsDto) {
+        validateBankAccountNumber(bankAccountsDto.getNumber());
+        BankAccounts bankAccount = new BankAccounts(bankAccountsDto.getNumber());
+        bankAccountsRepo.save(bankAccount);
+        Clients client = clientsRepo.findClientsByName(bankAccountsDto.getClientName())
+                .orElseThrow(() -> new NotFoundException("Clients with id: \"" + bankAccountsDto.getClientName() + "\" not found"));
+        client.addBankAccounts(bankAccount);
+        return "Банковский аккаунт для \"" + bankAccountsDto.getClientName() + "\" успешно добавлен";
     }
 
     @Override
     @Transactional
-    public void removeBankAccounts(BankAccounts bankAccounts) {
-        bankAccountsRepo.delete(bankAccounts);
-        bankAccounts.getClients().removeBankAccount(bankAccounts);
+    public String deleteBankAccount(BankAccountsDto bankAccountsDto) {
+        validateBankAccountNumber(bankAccountsDto.getNumber());
+        BankAccounts bankAccount = bankAccountsRepo.findBankAccountsByNumber(bankAccountsDto.getNumber())
+                .orElseThrow(() -> new NotFoundException("BankAccount with number: \"" + bankAccountsDto.getNumber() + "\" not found"));
+        bankAccountsRepo.delete(bankAccount);
+        bankAccount.getClients().removeBankAccount(bankAccount);
+        return "Банковский аккаунт успешно удален!";
     }
 
     @Override

@@ -13,4 +13,10 @@ public class BankAccountsDto {
 
     private String number;
     private int    balance;
+    private String clientName;
+
+    public BankAccountsDto(String number, int balance) {
+        this.number  = number;
+        this.balance = balance;
+    }
 }

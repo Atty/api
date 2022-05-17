@@ -1,10 +1,9 @@
 package bank.api.services;
 
 import bank.api.dto.CardsDto;
-import bank.api.entities.Cards;
 
 import java.util.List;
-
+//TODO дополнить описание
 public interface CardsService {
 
     /**
@@ -13,14 +12,14 @@ public interface CardsService {
      * @param bankAccountNumber Счет к которому добавляется карта
      * @return метод возвращает созданную карту при успешном добавлении
      */
-    CardsDto addCards(String bankAccountNumber);
+    CardsDto addCardsToBankAccount(String bankAccountNumber);
 
     /**
      * Данный метод позволяет удалить существующую карту из базы данных
      *
-     * @param card карта, которую нужно удалить
+     * @param cardsDto карта, которую нужно удалить
      */
-    void removeCards(Cards card);
+    String removeCard(CardsDto cardsDto);
 
     /**
      * Данный метод позволяет получить список карт, которые принадлежат
@@ -29,16 +28,14 @@ public interface CardsService {
      * @param clientsName имя клиента, чьи карты нужно получить
      * @return возвращает лист карт указанного клиента
      */
-    List<CardsDto> getCardsByClient(String clientsName);
+    List<CardsDto> getAllCardsByClient(String clientsName);
 
     /**
      * Данный метод пополняет баланс счета к которому привязана карта
      * на указанную сумму
      *
-     * @param cardNumber карта через которую происходит пополение
-     * @param value      сумма на которую необходимо пополнить
      */
-    void addFundsByCard(String cardNumber, String value);
+    String addFundsOnCard(CardsDto cardsDto);
 
     /**
      * Данный метод позволяет проверить баланс средств на счете к которому привязана

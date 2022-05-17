@@ -30,8 +30,8 @@ public class BankAccounts {
     @Column(name = "balance")
     private int balance;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_client")
+    @ManyToOne
+    @JoinColumn(name = "clients_id")
     @JsonIgnore
     private Clients clients;
 
@@ -43,6 +43,11 @@ public class BankAccounts {
     )
     @JsonIgnore
     private List<Cards> cardsList;
+
+    public BankAccounts(String number) {
+        this.number  = number;
+        this.balance = 0;
+    }
 
     public BankAccounts(String number, int balance) {
         this.number  = number;

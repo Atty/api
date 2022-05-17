@@ -2,7 +2,6 @@ package bank.api.services;
 
 
 import bank.api.dto.ClientsDto;
-import bank.api.entities.Clients;
 
 import java.util.List;
 
@@ -12,17 +11,17 @@ public interface ClientsService {
      * Данный метод позволяет добавить нового клиента
      * в базу данных
      *
-     * @param clients клиент, которого необзодимо добавить
+     * @param clientsDto клиент, которого необходимо добавить
      */
-    void addClient(Clients clients);
+    String addClient(ClientsDto clientsDto);
 
     /**
      * Данный метод позволяет удалить
      * существующего клиента из базы данных
      *
-     * @param clients клиент, которого необходимо удалить
+     * @param clientsDto клиент, которого необходимо удалить
      */
-    void deleteClients(Clients clients);
+    String deleteClient(ClientsDto clientsDto);
 
     /**
      * Данный метод позволяет получить список всех клиентов

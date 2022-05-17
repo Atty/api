@@ -1,7 +1,7 @@
 package bank.api.controllers;
 
-import bank.api.dto.CardsDto;
-import bank.api.services.CardsService;
+import bank.api.dto.ClientsDto;
+import bank.api.services.ClientsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,28 +14,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClientsController {
 
-    private final CardsService cardsService;
+    private final ClientsService clientsService;
+    private final HttpStatus     OK = HttpStatus.OK;
 
-    @GetMapping("/{clientsName}")
-    public ResponseEntity<List<CardsDto>> getAllCards(@PathVariable String clientsName) {
-        List<CardsDto> cardsDtoList = cardsService.getCardsByClient(clientsName);
-        return new ResponseEntity<>(cardsDtoList, HttpStatus.OK);
+    @GetMapping("/getAll")
+    public ResponseEntity<List<ClientsDto>> getListOfAllClients() {
+        return new ResponseEntity<>(clientsService.getListOfAllClients(), OK);
     }
 
-    @GetMapping()
-    public ResponseEntity<Integer> checkAccountBalance(@RequestParam String cardNumber) {
-        return new ResponseEntity<>(cardsService.checkBalance(cardNumber), HttpStatus.OK);
+    @PostMapping("/add")
+    public ResponseEntity<String> addNewClient(@RequestBody ClientsDto clientsDto) {
+        return new ResponseEntity<>(clientsService.addClient(clientsDto), OK);
     }
 
-    @PostMapping("/addCard")
-    public ResponseEntity<CardsDto> addNewCard(@RequestBody String accountNumber) {
-        CardsDto cardsDto = cardsService.addCards(accountNumber);
-        return new ResponseEntity<>(cardsDto, HttpStatus.OK);
-    }
-
-    @PostMapping("/addFunds")
-    public ResponseEntity<String> addFundsOnCard(@RequestBody CardsDto cardsDto) {
-        cardsService.addFundsByCard(cardsDto.getNumber(), cardsDto.getFunds());
-        return new ResponseEntity<>("Счет успешно пополнен!", HttpStatus.OK);
+    @PostMapping("/delete")
+    public ResponseEntity<String> deleteClient(@RequestBody ClientsDto clientsDto) {
+        return new ResponseEntity<>(clientsService.deleteClient(clientsDto), OK);
     }
 }

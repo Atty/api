@@ -8,7 +8,7 @@ public class Validator {
         validateCardAndAccountNumber(number, "Incorrect card number: " + number);
     }
 
-    public static int validateValue(String value) {
+    public static int validateFunds(String value) {
         int check = 0;
         try {
             check = Integer.parseInt(value);

@@ -30,27 +30,31 @@ public class CardsServiceImpl implements CardsService {
 
     @Override
     @Transactional
-    public CardsDto addCards(String bankAccountNumber) {
+    public CardsDto addCardsToBankAccount(String bankAccountNumber) {
         validateBankAccountNumber(bankAccountNumber);
         Cards card = cardsRepo.save(new Cards(cardsRepo.getMaxCardsNumber() + 1));
         BankAccounts bankAccounts = bankAccountsRepo.findBankAccountsByNumber(bankAccountNumber)
-                .orElseThrow(() -> new NotFoundException("BankAccount with number: " + bankAccountNumber + " not found"));
+                .orElseThrow(() -> new NotFoundException("BankAccount with number: \"" + bankAccountNumber + "\" not found"));
         bankAccounts.addCards(card);
         return ConverterDto.toDto(card);
     }
 
     @Override
     @Transactional
-    public void removeCards(Cards cards) {
-        cardsRepo.delete(cards);
-        cards.getBankAccounts().removeCards(cards);
+    public String removeCard(CardsDto cardsDto) {
+        validateCardNumber(cardsDto.getNumber());
+        Cards card = cardsRepo.findCardsByNumber(cardsDto.getNumber())
+                .orElseThrow(() -> new NotFoundException("Cards with number: \"" + cardsDto.getNumber() + "\" not found"));
+        cardsRepo.delete(card);
+        card.getBankAccounts().removeCards(card);
+        return "Карта успешно удалена!";
     }
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public List<CardsDto> getCardsByClient(String clientsName) {
+    public List<CardsDto> getAllCardsByClient(String clientsName) {
         Clients clients = clientsRepo.findClientsByName(clientsName)
-                .orElseThrow(() -> new NotFoundException("Clients with name: " + clientsName + " not found"));
+                .orElseThrow(() -> new NotFoundException("Clients with name: \"" + clientsName + "\" not found"));
         return clients.getBankAccountsList()
                 .stream()
                 .flatMap(n -> n.getCardsList().stream())
@@ -60,13 +64,14 @@ public class CardsServiceImpl implements CardsService {
 
     @Override
     @Transactional
-    public void addFundsByCard(String cardNumber, String value) {
-        validateCardNumber(cardNumber);
-        int checkedValue = validateValue(value);
-        Cards cards = cardsRepo.findCardsByNumber(cardNumber)
-                .orElseThrow(() -> new NotFoundException("Card with number: " + cardNumber + " not found"));
+    public String addFundsOnCard(CardsDto cardsDto) {
+        validateCardNumber(cardsDto.getNumber());
+        int checkedValue = validateFunds(cardsDto.getFunds());
+        Cards cards = cardsRepo.findCardsByNumber(cardsDto.getNumber())
+                .orElseThrow(() -> new NotFoundException("Card with number: \"" + cardsDto.getNumber() + "\" not found"));
         cards.getBankAccounts().addMoney(checkedValue);
         cardsRepo.save(cards);
+        return "Счет успешно пополнен!";
     }
 
     @Override
@@ -74,7 +79,7 @@ public class CardsServiceImpl implements CardsService {
     public int checkBalance(String cardNumber) {
         validateCardNumber(cardNumber);
         Cards cards = cardsRepo.findCardsByNumber(cardNumber)
-                .orElseThrow(() -> new NotFoundException("Card with number: " + cardNumber + " not found"));
+                .orElseThrow(() -> new NotFoundException("Card with number: \"" + cardNumber + "\" not found"));
         return cards.getBankAccounts().getBalance();
     }
 
