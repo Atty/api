@@ -8,7 +8,7 @@ import java.time.ZonedDateTime;
 
 @RequiredArgsConstructor
 @Getter
-public class ApiException {
+public class ResponseExceptionObject {
 
     private final String        message;
     private final HttpStatus    httpStatus;

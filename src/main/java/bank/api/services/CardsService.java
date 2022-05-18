@@ -3,21 +3,21 @@ package bank.api.services;
 import bank.api.dto.CardsDto;
 
 import java.util.List;
-//TODO дополнить описание
+
 public interface CardsService {
 
     /**
      * Данный метод позволяет добавить новую карту к определенному счету
      *
-     * @param bankAccountNumber Счет к которому добавляется карта
-     * @return метод возвращает созданную карту при успешном добавлении
+     * @param bankAccountNumber Номер счета к которому добавляется карта
+     * @return созданную карту при успешном добавлении
      */
     CardsDto addCardsToBankAccount(String bankAccountNumber);
 
     /**
      * Данный метод позволяет удалить существующую карту из базы данных
      *
-     * @param cardsDto карта, которую нужно удалить
+     * @param cardsDto карта, которую нужно удалить (нужно указать только номер карты)
      */
     String removeCard(CardsDto cardsDto);
 
@@ -26,7 +26,7 @@ public interface CardsService {
      * определенному клиенту
      *
      * @param clientsName имя клиента, чьи карты нужно получить
-     * @return возвращает лист карт указанного клиента
+     * @return список карт указанного клиента
      */
     List<CardsDto> getAllCardsByClient(String clientsName);
 
@@ -34,6 +34,8 @@ public interface CardsService {
      * Данный метод пополняет баланс счета к которому привязана карта
      * на указанную сумму
      *
+     * @param cardsDto карта на которую нужно добавить средства (указать номер и количество средств)
+     * @return сообщение о выполнении операции
      */
     String addFundsOnCard(CardsDto cardsDto);
 
@@ -41,8 +43,8 @@ public interface CardsService {
      * Данный метод позволяет проверить баланс средств на счете к которому привязана
      * указанная карта
      *
-     * @param cardNumber карта с помощью котороый необходимо узнать баланс
-     * @return возвращается сумма которая находится на счете в данный момент
+     * @param cardNumber номер карты с помощью которой необходимо узнать баланс
+     * @return сумма средств на счете в данный момент
      */
     int checkBalance(String cardNumber);
 

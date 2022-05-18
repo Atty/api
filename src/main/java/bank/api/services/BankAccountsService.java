@@ -2,7 +2,6 @@ package bank.api.services;
 
 
 import bank.api.dto.BankAccountsDto;
-import bank.api.entities.BankAccounts;
 
 import java.util.List;
 
@@ -12,14 +11,16 @@ public interface BankAccountsService {
      * Данный метод позволяет добавить новый счет в базу данных
      * привязывая его к определенному клиенту по его идентификатору
      *
-     * @param bankAccountsDto счет, который нужно добавить
+     * @param bankAccountsDto счет, который нужно добавить (нужно указать только номер)
+     * @return сообщение о выполнении операции
      */
     String addBankAccount(BankAccountsDto bankAccountsDto);
 
     /**
      * Данный метод позволяет удалить существующий счет из базы данных
      *
-     * @param bankAccountsDto счет, который нужно удалить
+     * @param bankAccountsDto счет, который нужно удалить (нужно указать только номер)
+     * @return сообщение о выполнении операции
      */
     String deleteBankAccount(BankAccountsDto bankAccountsDto);
 

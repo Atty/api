@@ -27,8 +27,8 @@ public class ApiExceptionHandler {
     }
 
     private ResponseEntity<Object> createExceptionResponse(HttpStatus status, Throwable e) {
-        ApiException apiException = new ApiException(e.getMessage(), status, ZonedDateTime.now(ZoneId.of("Z")));
-        return new ResponseEntity<>(apiException, status);
+        ResponseExceptionObject reo = new ResponseExceptionObject(e.getMessage(), status, ZonedDateTime.now(ZoneId.of("Z")));
+        return new ResponseEntity<>(reo, status);
     }
 
 }
