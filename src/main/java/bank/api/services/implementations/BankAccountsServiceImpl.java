@@ -2,7 +2,6 @@ package bank.api.services.implementations;
 
 import bank.api.dto.BankAccountsDto;
 import bank.api.entities.BankAccounts;
-import bank.api.entities.Clients;
 import bank.api.exceptions.NotFoundException;
 import bank.api.repositories.BankAccountsRepo;
 import bank.api.repositories.ClientsRepo;
@@ -30,9 +29,9 @@ public class BankAccountsServiceImpl implements BankAccountsService {
         validateBankAccountNumber(bankAccountsDto.getNumber());
         BankAccounts bankAccount = new BankAccounts(bankAccountsDto.getNumber());
         bankAccountsRepo.save(bankAccount);
-        Clients client = clientsRepo.findClientsByName(bankAccountsDto.getClientName())
-                .orElseThrow(() -> new NotFoundException("Clients with id: \"" + bankAccountsDto.getClientName() + "\" not found"));
-        client.addBankAccounts(bankAccount);
+        clientsRepo.findClientsByName(bankAccountsDto.getClientName())
+                .orElseThrow(() -> new NotFoundException("Clients with id: \"" + bankAccountsDto.getClientName() + "\" not found"))
+                .addBankAccounts(bankAccount);
         return "Банковский аккаунт для \"" + bankAccountsDto.getClientName() + "\" успешно добавлен";
     }
 
@@ -43,7 +42,7 @@ public class BankAccountsServiceImpl implements BankAccountsService {
         BankAccounts bankAccount = bankAccountsRepo.findBankAccountsByNumber(bankAccountsDto.getNumber())
                 .orElseThrow(() -> new NotFoundException("BankAccount with number: \"" + bankAccountsDto.getNumber() + "\" not found"));
         bankAccountsRepo.delete(bankAccount);
-        bankAccount.getClients().removeBankAccount(bankAccount);
+        bankAccount.getClient().removeBankAccount(bankAccount);
         return "Банковский аккаунт успешно удален!";
     }
 

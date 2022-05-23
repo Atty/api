@@ -33,10 +33,10 @@ public class BankAccounts {
     @ManyToOne
     @JoinColumn(name = "clients_id")
     @JsonIgnore
-    private Clients clients;
+    private Clients client;
 
     @OneToMany(
-            mappedBy = "bankAccounts",
+            mappedBy = "bankAccount",
             fetch = FetchType.LAZY,
             orphanRemoval = true,
             cascade = CascadeType.ALL
@@ -57,10 +57,10 @@ public class BankAccounts {
     public void addCards(Cards card) {
         if (cardsList == null) cardsList = new ArrayList<>();
         cardsList.add(card);
-        card.setBankAccounts(this);
+        card.setBankAccount(this);
     }
 
-    public void removeCards(Cards card) {
+    public void removeCard(Cards card) {
         cardsList.remove(card);
     }
 
@@ -74,8 +74,8 @@ public class BankAccounts {
     }
 
     @JsonIgnore
-    public Clients getClients() {
-        return clients;
+    public Clients getClient() {
+        return client;
     }
 
     @Override

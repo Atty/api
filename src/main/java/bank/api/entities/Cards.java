@@ -32,7 +32,7 @@ public class Cards {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_bank_account")
     @JsonIgnore
-    private BankAccounts bankAccounts;
+    private BankAccounts bankAccount;
 
     @JsonGetter("number")
     public String getJsonNumber() {
@@ -50,8 +50,8 @@ public class Cards {
     }
 
     @JsonIgnore
-    public BankAccounts getBankAccounts() {
-        return bankAccounts;
+    public BankAccounts getBankAccount() {
+        return bankAccount;
     }
 
     @Override

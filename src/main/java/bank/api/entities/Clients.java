@@ -28,7 +28,7 @@ public class Clients {
     private String name;
 
     @OneToMany(
-            mappedBy = "clients",
+            mappedBy = "client",
             fetch = FetchType.LAZY,
             orphanRemoval = true,
             cascade = CascadeType.ALL
@@ -43,7 +43,7 @@ public class Clients {
     public void addBankAccounts(BankAccounts bankAccount) {
         if (bankAccountsList == null) bankAccountsList = new ArrayList<>();
         bankAccountsList.add(bankAccount);
-        bankAccount.setClients(this);
+        bankAccount.setClient(this);
     }
 
     public void removeBankAccount(BankAccounts bankAccount) {
