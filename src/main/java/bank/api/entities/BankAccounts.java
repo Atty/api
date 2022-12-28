@@ -1,11 +1,11 @@
 package bank.api.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,12 +45,12 @@ public class BankAccounts {
     private List<Cards> cardsList;
 
     public BankAccounts(String number) {
-        this.number  = number;
+        this.number = number;
         this.balance = 0;
     }
 
     public BankAccounts(String number, int balance) {
-        this.number  = number;
+        this.number = number;
         this.balance = balance;
     }
 
