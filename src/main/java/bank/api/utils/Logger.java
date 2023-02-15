@@ -14,29 +14,32 @@ import java.util.Arrays;
 @Component
 public class Logger {
 
-    @Around("@within(org.springframework.stereotype.Service) || @within(org.springframework.web.bind.annotation.RestController)")
-    public Object logAroundServicesAndControllers(ProceedingJoinPoint pjp) {
+	@Around("@within(org.springframework.stereotype.Service) || @within(org.springframework.web.bind.annotation.RestController)")
+	public Object logAroundServicesAndControllers(ProceedingJoinPoint pjp) {
 
-        org.slf4j.Logger logger = LoggerFactory.getLogger(pjp.getTarget().getClass().getSimpleName() + ".class");
+		String           classSimpleName = pjp.getTarget().getClass().getSimpleName();
+		String           methodName      = pjp.getSignature().getName();
+		Object[]         args            = pjp.getArgs();
+		org.slf4j.Logger logger          = LoggerFactory.getLogger(pjp.getTarget().getClass());
 
-        try {
-            logger.info(pjp.getTarget().getClass().getSimpleName() + "." + pjp.getSignature().getName() + " start with args: " + Arrays.toString(pjp.getArgs()));
+		try {
+			logger.info(String.format("%s.%s start with args: %s", classSimpleName, methodName, Arrays.toString(args)));
 
-            Object result = pjp.proceed();
+			Object result = pjp.proceed();
 
-            logger.info(pjp.getTarget().getClass().getSimpleName() + "." + pjp.getSignature().getName() + " end");
+			logger.info(String.format("%s.%s end", classSimpleName, methodName));
 
-            return result;
-        } catch (NotFoundException e) {
-            logger.error(pjp.getTarget().getClass().getSimpleName() + "." + pjp.getSignature().getName() + ": Error message = " + e.getMessage());
-            throw new NotFoundException(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            logger.error(pjp.getTarget().getClass().getSimpleName() + "." + pjp.getSignature().getName() + ": Error message = " + e.getMessage());
-            throw new WrongArgumentException(e.getMessage(), e);
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
-    }
-
+			return result;
+		} catch (NotFoundException e) {
+			logger.error(String.format("%s.%s: Error message = %s", classSimpleName, methodName, e.getMessage()));
+			throw new NotFoundException(e.getMessage(), e);
+		} catch (IllegalArgumentException e) {
+			logger.error(String.format("%s.%s: Error message = %s", classSimpleName, methodName, e.getMessage()));
+			throw new WrongArgumentException(e.getMessage(), e);
+		} catch (Throwable e) {
+			logger.error(String.format("%s.%s: Error message = %s", classSimpleName, methodName, e.getMessage()), e);
+			throw new RuntimeException(e);
+		}
+	}
 
 }

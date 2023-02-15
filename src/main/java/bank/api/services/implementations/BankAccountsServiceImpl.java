@@ -20,37 +20,40 @@ import static bank.api.utils.Validator.validateBankAccountNumber;
 @RequiredArgsConstructor
 public class BankAccountsServiceImpl implements BankAccountsService {
 
-    private final BankAccountsRepo bankAccountsRepo;
-    private final ClientsRepo      clientsRepo;
+	private final BankAccountsRepo bankAccountsRepo;
+	private final ClientsRepo      clientsRepo;
 
-    @Override
-    @Transactional
-    public String addBankAccount(BankAccountsDto bankAccountsDto) {
-        validateBankAccountNumber(bankAccountsDto.getNumber());
-        BankAccounts bankAccount = new BankAccounts(bankAccountsDto.getNumber());
-        bankAccountsRepo.save(bankAccount);
-        clientsRepo.findClientsByName(bankAccountsDto.getClientName())
-                .orElseThrow(() -> new NotFoundException("Clients with id: \"" + bankAccountsDto.getClientName() + "\" not found"))
-                .addBankAccounts(bankAccount);
-        return "Банковский аккаунт для \"" + bankAccountsDto.getClientName() + "\" успешно добавлен";
-    }
+	@Override
+	@Transactional
+	public String addBankAccount(BankAccountsDto bankAccountsDto) {
+		var bankAccountNumber = bankAccountsDto.getNumber();
+		validateBankAccountNumber(bankAccountNumber);
+		var clientName  = bankAccountsDto.getClientName();
+		var bankAccount = new BankAccounts(bankAccountNumber);
+		bankAccountsRepo.save(bankAccount);
+		clientsRepo.findClientsByName(bankAccountsDto.getClientName())
+				   .orElseThrow(() -> new NotFoundException(String.format("Clients with id: \"%s\" not found", clientName)))
+				   .addBankAccounts(bankAccount);
+		return String.format("Банковский аккаунт для \"%s\" успешно добавлен", clientName);
+	}
 
-    @Override
-    @Transactional
-    public String deleteBankAccount(BankAccountsDto bankAccountsDto) {
-        validateBankAccountNumber(bankAccountsDto.getNumber());
-        BankAccounts bankAccount = bankAccountsRepo.findBankAccountsByNumber(bankAccountsDto.getNumber())
-                .orElseThrow(() -> new NotFoundException("BankAccount with number: \"" + bankAccountsDto.getNumber() + "\" not found"));
-        bankAccountsRepo.delete(bankAccount);
-        bankAccount.getClient().removeBankAccount(bankAccount);
-        return "Банковский аккаунт успешно удален!";
-    }
+	@Override
+	@Transactional
+	public String deleteBankAccount(BankAccountsDto bankAccountsDto) {
+		var bankAccountNumber = bankAccountsDto.getNumber();
+		validateBankAccountNumber(bankAccountNumber);
+		var bankAccount = bankAccountsRepo.findBankAccountsByNumber(bankAccountNumber)
+										  .orElseThrow(() -> new NotFoundException(String.format("BankAccount with number: \"%s\" not found", bankAccountNumber)));
+		bankAccountsRepo.delete(bankAccount);
+		bankAccount.getClient().removeBankAccount(bankAccount);
+		return "Банковский аккаунт успешно удален!";
+	}
 
-    @Override
-    public List<BankAccountsDto> getListOfAllBankAccounts() {
-        return bankAccountsRepo.findAll()
-                .stream()
-                .map(ConverterDto::toDto)
-                .collect(Collectors.toList());
-    }
+	@Override
+	public List<BankAccountsDto> getListOfAllBankAccounts() {
+		return bankAccountsRepo.findAll()
+							   .stream()
+							   .map(ConverterDto::toDtoFromBankAccounts)
+							   .collect(Collectors.toList());
+	}
 }

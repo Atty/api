@@ -22,71 +22,73 @@ import static bank.api.utils.Validator.*;
 @RequiredArgsConstructor
 public class CardsServiceImpl implements CardsService {
 
-    private final CardsRepo        cardsRepo;
-    private final BankAccountsRepo bankAccountsRepo;
-    private final ClientsRepo      clientsRepo;
+	private final CardsRepo        cardsRepo;
+	private final BankAccountsRepo bankAccountsRepo;
+	private final ClientsRepo      clientsRepo;
 
-    @Override
-    @Transactional
-    public CardsDto addCardsToBankAccount(String bankAccountNumber) {
-        validateBankAccountNumber(bankAccountNumber);
-        Cards card = cardsRepo.save(new Cards(cardsRepo.getMaxCardsNumber() + 1));
-        bankAccountsRepo.findBankAccountsByNumber(bankAccountNumber)
-                .orElseThrow(() -> new NotFoundException("BankAccount with number: \"" + bankAccountNumber + "\" not found"))
-                .addCards(card);
-        return ConverterDto.toDto(card);
-    }
+	@Override
+	@Transactional
+	public CardsDto addCardsToBankAccount(String bankAccountNumber) {
+		validateBankAccountNumber(bankAccountNumber);
+		var card = cardsRepo.save(new Cards(cardsRepo.getMaxCardsNumber() + 1));
+		bankAccountsRepo.findBankAccountsByNumber(bankAccountNumber)
+						.orElseThrow(() -> new NotFoundException(String.format("BankAccount with number: \"%s\" not found", bankAccountNumber)))
+						.addCards(card);
+		return ConverterDto.toDtoFromCards(card);
+	}
 
-    @Override
-    @Transactional
-    public String removeCard(CardsDto cardsDto) {
-        validateCardNumber(cardsDto.getNumber());
-        Cards card = cardsRepo.findCardsByNumber(cardsDto.getNumber())
-                .orElseThrow(() -> new NotFoundException("Cards with number: \"" + cardsDto.getNumber() + "\" not found"));
-        cardsRepo.delete(card);
-        card.getBankAccount().removeCard(card);
-        return "Карта успешно удалена!";
-    }
+	@Override
+	@Transactional
+	public String removeCard(CardsDto cardsDto) {
+		var cardNumber = cardsDto.getNumber();
+		validateCardNumber(cardNumber);
+		var card = cardsRepo.findCardsByNumber(cardNumber)
+							.orElseThrow(() -> new NotFoundException(String.format("Cards with number: \"%s\" not found", cardNumber)));
+		cardsRepo.delete(card);
+		card.getBankAccount().removeCard(card);
+		return "Карта успешно удалена!";
+	}
 
-    @Override
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public List<CardsDto> getAllCardsByClient(String clientsName) {
-        return clientsRepo.findClientsByName(clientsName)
-                .orElseThrow(() -> new NotFoundException("Clients with name: \"" + clientsName + "\" not found"))
-                .getBankAccountsList()
-                .stream()
-                .flatMap(n -> n.getCardsList().stream())
-                .map(ConverterDto::toDto)
-                .collect(Collectors.toList());
-    }
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS)
+	public List<CardsDto> getAllCardsByClient(String clientsName) {
+		return clientsRepo.findClientsByName(clientsName)
+						  .orElseThrow(() -> new NotFoundException(String.format("Clients with name: \"%s\" not found", clientsName)))
+						  .getBankAccountsList()
+						  .stream()
+						  .flatMap(n -> n.getCardsList().stream())
+						  .map(ConverterDto::toDtoFromCards)
+						  .collect(Collectors.toList());
+	}
 
-    @Override
-    @Transactional
-    public String addFundsOnCard(CardsDto cardsDto) {
-        validateCardNumber(cardsDto.getNumber());
-        int checkedValue = validateFunds(cardsDto.getFunds());
-        Cards card = cardsRepo.findCardsByNumber(cardsDto.getNumber())
-                .orElseThrow(() -> new NotFoundException("Card with number: \"" + cardsDto.getNumber() + "\" not found"));
-        card.getBankAccount().addMoney(checkedValue);
-        cardsRepo.save(card);
-        return "Счет успешно пополнен!";
-    }
+	@Override
+	@Transactional
+	public String addFundsOnCard(CardsDto cardsDto) {
+		var cardNumber = cardsDto.getNumber();
+		validateCardNumber(cardNumber);
+		var checkedValue = validateFunds(cardsDto.getFunds());
+		var card = cardsRepo.findCardsByNumber(cardNumber)
+							.orElseThrow(() -> new NotFoundException(String.format("Card with number: \"%s\" not found", cardNumber)));
+		card.getBankAccount().addMoney(checkedValue);
+		cardsRepo.save(card);
+		return "Счет успешно пополнен!";
+	}
 
-    @Override
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public int checkBalance(String cardNumber) {
-        validateCardNumber(cardNumber);
-        return cardsRepo.findCardsByNumber(cardNumber)
-                .orElseThrow(() -> new NotFoundException("Card with number: \"" + cardNumber + "\" not found"))
-                .getBankAccount()
-                .getBalance();
-    }
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS)
+	public int checkBalance(String cardNumber) {
+		validateCardNumber(cardNumber);
+		return cardsRepo.findCardsByNumber(cardNumber)
+						.orElseThrow(() -> new NotFoundException(String.format("Card with number: \"%s\" not found", cardNumber)))
+						.getBankAccount()
+						.getBalance();
+	}
 
-    @Override
-    public List<CardsDto> getListOfAllCards() {
-        return cardsRepo.findAll()
-                .stream()
-                .map(ConverterDto::toDto)
-                .collect(Collectors.toList());
-    }
+	@Override
+	public List<CardsDto> getListOfAllCards() {
+		return cardsRepo.findAll()
+						.stream()
+						.map(ConverterDto::toDtoFromCards)
+						.collect(Collectors.toList());
+	}
 }

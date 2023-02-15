@@ -2,37 +2,46 @@ package bank.api.utils;
 
 import bank.api.exceptions.IncorrectInputException;
 
+import java.util.regex.Pattern;
+
 public class Validator {
 
-    public static void validateCardNumber(String number) {
-        validateCardAndAccountNumber(number, "Incorrect card number: " + number);
-    }
+	private static final Pattern CARD_NUMBER_PATTERN  = Pattern.compile("^1[0-9]{15}$");
+	private static final Pattern BANK_ACCOUNT_PATTERN = Pattern.compile("^1[0-9]{15}$");
+	private static final Pattern CLIENTS_NAME_PATTERN = Pattern.compile("^[A-Z][a-z]*(\\s[A-Z][a-z]*)*$");
 
-    public static int validateFunds(String value) {
-        int check = 0;
-        try {
-            check = Integer.parseInt(value);
-            if (check <= 0) {
-                throw new IncorrectInputException("Incorrect value: " + value);
-            }
-        } catch (NumberFormatException e) {
-            throw new IncorrectInputException("Incorrect value: " + value, e);
-        }
-        return check;
-    }
+	public static void validateCardNumber(String number) {
+		if (!CARD_NUMBER_PATTERN.matcher(number).matches()) {
+			throw new IncorrectInputException(String.format("Invalid card number: %s", number));
+		}
+	}
 
-    public static void validateBankAccountNumber(String number) {
-        validateCardAndAccountNumber(number, "Incorrect bank account number: " + number);
-    }
+	public static int validateFunds(String value) {
+		final int check;
+		try {
+			check = Integer.parseInt(value);
+			if (check <= 0) {
+				throw new IncorrectInputException(String.format("Invalid value: %s", value));
+			}
+		} catch (NumberFormatException e) {
+			throw new IncorrectInputException(String.format("Invalid value: %s", value), e);
+		}
+		return check;
+	}
 
-    private static void validateCardAndAccountNumber(String number, String error) {
-        try {
-            long check = Long.parseLong(number);
-            if (check < 1000_0000_0000_0000L || check >= 1_0000_0000_0000_0000L) {
-                throw new IncorrectInputException(error);
-            }
-        } catch (NumberFormatException e) {
-            throw new IncorrectInputException(error, e);
-        }
-    }
+	public static void validateBankAccountNumber(String number) {
+		if (!BANK_ACCOUNT_PATTERN.matcher(number).matches()) {
+			throw new IncorrectInputException(String.format("Invalid bank account number: %s", number));
+		}
+	}
+
+	public static void validateClientsName(String name) {
+		if (name.isEmpty()) {
+			throw new IncorrectInputException("Client name cannot be empty");
+		}
+		if (!CLIENTS_NAME_PATTERN.matcher(name).matches()) {
+			throw new IncorrectInputException(String.format("Invalid client's name: %s. Name should contain only alphabets and spaces, with each word starting with an uppercase letter and followed by one or more lowercase letters.", name));
+		}
+	}
+
 }
