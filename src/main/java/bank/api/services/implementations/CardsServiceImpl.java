@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static bank.api.utils.Validator.*;
+import static java.lang.String.format;
 
 @Service
 @RequiredArgsConstructor
@@ -30,9 +31,9 @@ public class CardsServiceImpl implements CardsService {
 	@Transactional
 	public CardsDto addCardsToBankAccount(String bankAccountNumber) {
 		validateBankAccountNumber(bankAccountNumber);
-		var card = cardsRepo.save(new Cards(cardsRepo.getMaxCardsNumber() + 1));
+		var card = cardsRepo.save(new Cards(cardsRepo.getMaxCardsNumber() + 1L));
 		bankAccountsRepo.findBankAccountsByNumber(bankAccountNumber)
-						.orElseThrow(() -> new NotFoundException(String.format("BankAccount with number: \"%s\" not found", bankAccountNumber)))
+						.orElseThrow(() -> new NotFoundException(format("BankAccount with number: \"%s\" not found", bankAccountNumber)))
 						.addCards(card);
 		return ConverterDto.toDtoFromCards(card);
 	}
@@ -43,7 +44,7 @@ public class CardsServiceImpl implements CardsService {
 		var cardNumber = cardsDto.getNumber();
 		validateCardNumber(cardNumber);
 		var card = cardsRepo.findCardsByNumber(cardNumber)
-							.orElseThrow(() -> new NotFoundException(String.format("Cards with number: \"%s\" not found", cardNumber)));
+							.orElseThrow(() -> new NotFoundException(format("Cards with number: \"%s\" not found", cardNumber)));
 		cardsRepo.delete(card);
 		card.getBankAccount().removeCard(card);
 		return "Карта успешно удалена!";
@@ -53,7 +54,7 @@ public class CardsServiceImpl implements CardsService {
 	@Transactional(propagation = Propagation.SUPPORTS)
 	public List<CardsDto> getAllCardsByClient(String clientsName) {
 		return clientsRepo.findClientsByName(clientsName)
-						  .orElseThrow(() -> new NotFoundException(String.format("Clients with name: \"%s\" not found", clientsName)))
+						  .orElseThrow(() -> new NotFoundException(format("Clients with name: \"%s\" not found", clientsName)))
 						  .getBankAccountsList()
 						  .stream()
 						  .flatMap(n -> n.getCardsList().stream())
@@ -68,7 +69,7 @@ public class CardsServiceImpl implements CardsService {
 		validateCardNumber(cardNumber);
 		var checkedValue = validateFunds(cardsDto.getFunds());
 		var card = cardsRepo.findCardsByNumber(cardNumber)
-							.orElseThrow(() -> new NotFoundException(String.format("Card with number: \"%s\" not found", cardNumber)));
+							.orElseThrow(() -> new NotFoundException(format("Card with number: \"%s\" not found", cardNumber)));
 		card.getBankAccount().addMoney(checkedValue);
 		cardsRepo.save(card);
 		return "Счет успешно пополнен!";
@@ -79,7 +80,7 @@ public class CardsServiceImpl implements CardsService {
 	public int checkBalance(String cardNumber) {
 		validateCardNumber(cardNumber);
 		return cardsRepo.findCardsByNumber(cardNumber)
-						.orElseThrow(() -> new NotFoundException(String.format("Card with number: \"%s\" not found", cardNumber)))
+						.orElseThrow(() -> new NotFoundException(format("Card with number: \"%s\" not found", cardNumber)))
 						.getBankAccount()
 						.getBalance();
 	}
@@ -91,4 +92,5 @@ public class CardsServiceImpl implements CardsService {
 						.map(ConverterDto::toDtoFromCards)
 						.collect(Collectors.toList());
 	}
+
 }
